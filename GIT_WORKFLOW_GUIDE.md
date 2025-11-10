@@ -28,25 +28,18 @@ pip install -r requirements.txt
 
 ### Step 1: Update Your Local Main Branch
 ```bash
-# Switch to main branch
+# Make sure you're on main branch
 git checkout main
 
-# Get the latest changes
+# Get the latest changes from GitHub
 git pull origin main
 ```
 
-### Step 2: Create a New Branch for Your Work
-```bash
-# Create and switch to a new branch
-# Use a descriptive name like: fix-bug, add-analysis, update-plots
-git checkout -b your-branch-name-here
-```
-
-### Step 3: Do Your Work
+### Step 2: Do Your Work
 - Edit files, run code, create notebooks
 - Test your changes to make sure they work
 
-### Step 4: Save Your Changes
+### Step 3: Save Your Changes Locally
 ```bash
 # See what files you changed
 git status
@@ -55,56 +48,58 @@ git status
 git add .
 
 # Or add specific files
-git add filename.py
+git add filename.py another_file.ipynb
 
 # Commit with a descriptive message
 git commit -m "Brief description of what you did"
 ```
 
-### Step 5: Push Your Branch to GitHub
+### Step 4: Push Your Changes to GitHub
 ```bash
-# Push your branch (not main!)
-git push origin your-branch-name-here
+# Push to main branch
+git push origin main
 ```
 
-### Step 6: Create a Pull Request on GitHub
-1. Go to the repository on GitHub.com
-2. You'll see a yellow banner saying "your-branch-name-here had recent pushes"
-3. Click the green **"Compare & pull request"** button
-4. Add a description if needed
-5. Click **"Create pull request"**
+That's it! Your changes are now on GitHub.
 
-### Step 7: Merge Your Pull Request
-1. On the pull request page, click the green **"Merge pull request"** button
-2. Click **"Confirm merge"**
-3. Optionally click **"Delete branch"** to clean up
+## Working on Features (Optional - For Bigger Changes)
 
-### Step 8: Update Your Local Repository
+If you're working on something experimental or want to keep main stable:
+
 ```bash
-# Switch back to main
+# Create a new branch
+git checkout -b feature-name
+
+# Work and commit as usual
+git add .
+git commit -m "Description"
+
+# Push the branch
+git push origin feature-name
+
+# When ready, merge it into main
 git checkout main
+git merge feature-name
+git push origin main
 
-# Pull the merged changes
-git pull origin main
-
-# Delete your local branch (cleanup)
-git branch -d your-branch-name-here
+# Delete the feature branch
+git branch -d feature-name
 ```
 
-## Important Rules
+## Important Guidelines
 
 ### ✅ DO:
-- Always work on a new branch
-- Pull the latest changes before starting new work
-- Use descriptive branch names (`add-feature`, not `branch1`)
+- **Always pull before you start working** (`git pull origin main`)
+- **Pull before pushing** to avoid conflicts
 - Commit frequently with clear messages
-- Ask questions if something seems wrong
+- Test your code before pushing
+- Communicate with your collaborator about what you're working on
 
 ### ❌ DON'T:
-- Don't push directly to main (it's protected anyway)
-- Don't use `git push -f` (force push) unless you're absolutely sure
+- **Don't use `git push -f` or `git push --force`** (this can overwrite your collaborator's work!)
 - Don't commit large data files (they go in the Data/ folder which is gitignored)
 - Don't commit virtual environment files (the venv/ folder is gitignored)
+- Don't commit when you have broken code (fix it first or stash it)
 
 ## Common Commands Quick Reference
 
@@ -116,50 +111,92 @@ git branch
 git status
 
 # See your recent commits
-git log --oneline -5
+git log --oneline -10
 
 # Discard changes to a file (be careful!)
 git checkout -- filename.py
 
-# Switch to an existing branch
-git checkout branch-name
+# See differences before committing
+git diff
 
-# List all branches
-git branch -a
+# Stash changes temporarily (to pull updates)
+git stash
+git pull origin main
+git stash pop
 ```
 
 ## Troubleshooting
 
-### "I'm on the wrong branch!"
+### "I get a merge conflict when pulling!"
+
+This happens when you and your collaborator edited the same file.
+
 ```bash
-# If you haven't committed yet:
-git stash              # Save your changes temporarily
-git checkout main      # Switch to main
-git pull origin main   # Update main
-git checkout -b new-branch-name  # Create proper branch
-git stash pop          # Restore your changes
-```
+# Git will mark the conflicts in your files
+# Open the conflicted files and look for:
+# <<<<<<< HEAD
+# your changes
+# =======
+# their changes
+# >>>>>>>
 
-### "I committed to main by accident!"
-Don't panic! Contact your collaborator. The branch protection should prevent pushing it.
-
-### "I have merge conflicts!"
-```bash
-# Pull the latest changes
-git pull origin main
-
-# Git will mark the conflicts in the files
-# Open the files and look for <<<<<<< ======= >>>>>>>
-# Edit to keep what you want
+# Edit the file to keep what you want (remove the markers)
 # Then:
 git add .
 git commit -m "Resolved merge conflicts"
+git push origin main
 ```
 
-### "I need help!"
-- Check `git status` to see what state you're in
-- Ask your collaborator
-- You can always make a fresh clone if things get really messy
+### "I need to update my code but I have uncommitted changes!"
+
+**Option 1: Commit your changes**
+```bash
+git add .
+git commit -m "Work in progress"
+git pull origin main
+```
+
+**Option 2: Stash temporarily**
+```bash
+git stash              # Save changes temporarily
+git pull origin main   # Get updates
+git stash pop          # Restore your changes
+```
+
+### "I accidentally committed something wrong!"
+
+**If you haven't pushed yet:**
+```bash
+# Undo the last commit (keeps your changes)
+git reset --soft HEAD~1
+
+# Fix your files, then commit again
+git add .
+git commit -m "Corrected commit message"
+```
+
+**If you already pushed:**
+Contact your collaborator before trying to fix it!
+
+### "I'm confused about what state I'm in!"
+
+```bash
+# This shows you everything
+git status
+
+# This shows recent commits
+git log --oneline -5
+
+# If really stuck, ask your collaborator or clone fresh
+```
+
+## Best Practices for Smooth Collaboration
+
+1. **Communicate** - Let each other know what files you're working on
+2. **Pull often** - Before starting work, before pushing
+3. **Push complete work** - Don't push broken code
+4. **Small commits** - Commit logical chunks, not giant changes
+5. **Clear messages** - Write commit messages that explain what and why
 
 ## Project Structure Reminder
 
@@ -168,4 +205,12 @@ git commit -m "Resolved merge conflicts"
 - `*.py` - Python scripts (tracked by git)
 - `*.ipynb` - Jupyter notebooks (tracked by git)
 - `venv/` - Virtual environment (not tracked by git)
+- `GIT_WORKFLOW_GUIDE.md` - This file!
 
+## When in Doubt
+
+- Run `git status` to see what's happening
+- Run `git pull` to get the latest changes
+- Ask your collaborator
+- Google the error message (git errors are usually well-documented)
+- You can always clone a fresh copy if things get messy
