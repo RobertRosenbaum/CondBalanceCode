@@ -41,9 +41,12 @@ wheels/
 .DS_Store
 Thumbs.db
 
-# Project specific - ignore contents of Figures and Data folders
+# Project specific - keep folders, ignore their contents
 Figures/*
 !Figures/.gitkeep
 Data/*
 !Data/.gitkeep
+Image/*
+!Image/.gitkeep
+OldAndScratch/
 

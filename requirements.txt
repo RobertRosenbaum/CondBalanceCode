@@ -1,4 +1,7 @@
 numpy
 matplotlib
 seaborn
+ipykernel
+jupyter
+notebook
 

@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 ## Project Structure
 
-- `Figures/` - Output figures from analysis
+- `Image/` - Output figures from analysis
 - `Data/` - Data files
 - Python scripts and Jupyter notebooks for analysis
 

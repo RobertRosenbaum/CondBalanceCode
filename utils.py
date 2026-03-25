@@ -1,7 +1,5 @@
 import numpy as np
 
-
-
 # Function to generate blockwise ER connection matrix
 # NsPre = tuple of ints containing number of pre neurons in each block
 # Jm = matrix connection weights in each block
@@ -62,8 +60,10 @@ def PoissonProcess(r,Nt,dt,n=1,c=0,rep='full',taujitter=0):
     S[0, :] = SpikeTimes
     S[1, :] = NeuronInds
 
-  if taujitter!=0 and (c==0 or rep=='full'):
+  if taujitter!=0 and rep=='full':
     print('Cannot jitter')
+  # elif taujitter!=0 and c==0:
+  #   print('No need to jitter when c==0')
 
 
   # elif rep=='sparse':
@@ -101,17 +101,17 @@ def PoissonProcess(r,Nt,dt,n=1,c=0,rep='full',taujitter=0):
 
 
 
-# # Returns 2D array of spike counts from sparse spike train, s.
-# # Counts spikes over window size winsize.
-# # h is represented as (neuron)x(time)
-# # so h[j,k] is the spike count of neuron j at time window k
-# def GetSpikeCounts(s,winsize,N,T):
-#
-#   xedges=np.arange(0,N+1,1)
-#   yedges=np.arange(0,T+winsize,winsize)
-#   h,_,_=np.histogram2d(s[1,:],s[0,:],bins=[xedges,yedges])
-#   return h
-#
+# Returns 2D array of spike counts from sparse spike train, s.
+# Counts spikes over window size winsize.
+# h is represented as (neuron)x(time)
+# so h[j,k] is the spike count of neuron j at time window k
+def GetSpikeCounts(s,winsize,N,T):
+
+  xedges=np.arange(0,N+1,1)
+  yedges=np.arange(0,T+winsize,winsize)
+  h,_,_=np.histogram2d(s[1,:],s[0,:],bins=[xedges,yedges])
+  return h
+
 # # Returns a resampled version of x
 # # with a different dt.
 # def DumbDownsample(x,dt_old,dt_new):
@@ -120,4 +120,31 @@ def PoissonProcess(r,Nt,dt,n=1,c=0,rep='full',taujitter=0):
 #     print('New dt should be larger than old dt. Returning x.')
 #     return x
 #   return x.reshape()
-#
+
+def GetSpikeCountCorrelation(s, n, T, winsize, min_rate=0):
+    # Get spike counts
+    h = GetSpikeCounts(s, winsize, n, T)
+    
+    Igood = np.where(h.sum(axis=1) > min_rate * T)[0]
+    h = h[Igood,1:-1] # Get rid of first and last time bins, and low-rate neurons
+    temp = np.corrcoef(h)
+    i_upper = np.triu_indices(temp.shape[0], k=1)
+    upper_corr = temp[i_upper]
+    valid_corr = upper_corr[~np.isnan(upper_corr)]
+    return valid_corr
+
+def GetShuffledSpikeCountCorrelation(s, n, T, winsize, min_rate=0):
+    # Get spike counts
+    h = GetSpikeCounts(s, winsize, n, T)
+    
+    Igood = np.where(h.sum(axis=1) > min_rate * T)[0]
+    h = h[Igood,1:-1] # Get rid of first and last time bins, and low-rate neurons
+    # Shuffle each neuron's time windows independently (same permutation preserved correlations)
+    for i in range(h.shape[0]):
+        h[i, :] = h[i, np.random.permutation(h.shape[1])]    
+    temp = np.corrcoef(h)
+    i_upper = np.triu_indices(temp.shape[0], k=1)
+    upper_corr = temp[i_upper]
+    valid_corr = upper_corr[~np.isnan(upper_corr)]
+    return valid_corr
+
