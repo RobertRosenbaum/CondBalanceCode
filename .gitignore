@@ -42,8 +42,6 @@ wheels/
 Thumbs.db
 
 # Project specific - keep folders, ignore their contents
-Figures/*
-!Figures/.gitkeep
 Data/*
 !Data/.gitkeep
 Image/*
