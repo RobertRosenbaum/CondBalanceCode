@@ -40,6 +40,7 @@ wheels/
 # OS
 .DS_Store
 Thumbs.db
+Icon?
 
 # Project specific - keep folders, ignore their contents
 Data/*
