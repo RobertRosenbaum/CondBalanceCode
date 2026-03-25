@@ -1,6 +1,8 @@
 # Conductance-Based Balance Code
 
-Python project for conductance-based balance analysis.
+Code to run simulations and produce all figures in the paper 
+``Empirical scaling laws in recurrent balanced  networks with conductance-based synapses''
+
 
 ## Setup
 
