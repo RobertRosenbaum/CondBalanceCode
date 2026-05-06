@@ -4,4 +4,5 @@ seaborn
 ipykernel
 jupyter
 notebook
+cairosvg
 
